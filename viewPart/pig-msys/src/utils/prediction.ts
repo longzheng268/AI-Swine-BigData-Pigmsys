@@ -3,14 +3,74 @@
  * 将 Python Flask 预测服务的算法逻辑迁移到前端 JavaScript
  */
 
+// 类型定义
+export interface GrowthInput {
+  age?: number
+  feed?: number
+  breed?: string
+  sex?: string
+}
+
+export interface GrowthResult {
+  predicted_weight: number
+  growth_rate: number
+  accuracy: number
+  confidence: number
+  suggestions: string
+}
+
+export interface EnvironmentInput {
+  temperature?: number
+  humidity?: number
+  co2?: number
+  nh3?: number
+  light?: number
+}
+
+export interface EnvironmentResult {
+  quality_level: string
+  quality: string
+  score: number
+  temperature_status: string
+  humidity_status: string
+  co2_status: string
+  nh3_status: string
+  light_status: string
+  suggestions: string
+  accuracy: number
+}
+
+export interface DiseaseInput {
+  temperature?: number
+  humidity?: number
+  density?: number
+  age?: number
+  vaccinated?: boolean
+}
+
+export interface DiseaseResult {
+  risk_level: string
+  risk_probability: number
+  risk_score: number
+  prevention_advice: string
+  suggestions: string[]
+  accuracy: number
+}
+
+export interface PredictionResponse<T> {
+  code: number
+  message: string
+  data: T | null
+}
+
 /**
  * 生猪生长预测
  * @param inputData - 输入数据：{ age, feed, breed, sex }
  * @returns 预测结果
  */
-export function predictGrowth(inputData: any) {
-  const age = parseFloat(inputData.age || 100)
-  const feed = parseFloat(inputData.feed || 2.5)
+export function predictGrowth(inputData: GrowthInput): GrowthResult {
+  const age = Number(inputData.age || 100)
+  const feed = Number(inputData.feed || 2.5)
   const breed = inputData.breed || '白猪'
   const sex = inputData.sex || '公'
 
@@ -36,12 +96,12 @@ export function predictGrowth(inputData: any) {
  * @param inputData - 输入数据：{ temperature, humidity, co2, nh3, light }
  * @returns 评价结果
  */
-export function predictEnvironment(inputData: any) {
-  const temperature = parseFloat(inputData.temperature || 25)
-  const humidity = parseFloat(inputData.humidity || 65)
-  const co2 = parseFloat(inputData.co2 || 500)
-  const nh3 = parseFloat(inputData.nh3 || 20)
-  const light = parseFloat(inputData.light || 300)
+export function predictEnvironment(inputData: EnvironmentInput): EnvironmentResult {
+  const temperature = Number(inputData.temperature || 25)
+  const humidity = Number(inputData.humidity || 65)
+  const co2 = Number(inputData.co2 || 500)
+  const nh3 = Number(inputData.nh3 || 20)
+  const light = Number(inputData.light || 300)
 
   // 评分计算
   let score = 100
@@ -107,11 +167,11 @@ export function predictEnvironment(inputData: any) {
  * @param inputData - 输入数据：{ temperature, humidity, density, age, vaccinated }
  * @returns 风险预测结果
  */
-export function predictDisease(inputData: any) {
-  const temperature = parseFloat(inputData.temperature || 25)
-  const humidity = parseFloat(inputData.humidity || 65)
-  const density = parseFloat(inputData.density || 10)
-  const age = parseFloat(inputData.age || 60)
+export function predictDisease(inputData: DiseaseInput): DiseaseResult {
+  const temperature = Number(inputData.temperature || 25)
+  const humidity = Number(inputData.humidity || 65)
+  const density = Number(inputData.density || 10)
+  const age = Number(inputData.age || 60)
   const vaccinated = inputData.vaccinated !== undefined ? inputData.vaccinated : true
 
   // 风险计算
@@ -178,19 +238,34 @@ export function predictDisease(inputData: any) {
  * @param inputData - 输入数据
  * @returns 预测结果
  */
-export function predict(modelType: string, inputData: any) {
+export function predict(
+  modelType: 'GROWTH',
+  inputData: GrowthInput
+): PredictionResponse<GrowthResult>
+export function predict(
+  modelType: 'ENVIRONMENT',
+  inputData: EnvironmentInput
+): PredictionResponse<EnvironmentResult>
+export function predict(
+  modelType: 'DISEASE',
+  inputData: DiseaseInput
+): PredictionResponse<DiseaseResult>
+export function predict(
+  modelType: string,
+  inputData: GrowthInput | EnvironmentInput | DiseaseInput
+): PredictionResponse<GrowthResult | EnvironmentResult | DiseaseResult> {
   try {
-    let result: any
+    let result: GrowthResult | EnvironmentResult | DiseaseResult
 
     switch (modelType) {
       case 'GROWTH':
-        result = predictGrowth(inputData)
+        result = predictGrowth(inputData as GrowthInput)
         break
       case 'ENVIRONMENT':
-        result = predictEnvironment(inputData)
+        result = predictEnvironment(inputData as EnvironmentInput)
         break
       case 'DISEASE':
-        result = predictDisease(inputData)
+        result = predictDisease(inputData as DiseaseInput)
         break
       default:
         throw new Error('不支持的模型类型')

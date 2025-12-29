@@ -153,7 +153,7 @@
               <el-descriptions-item label="准确率">{{ (diseaseResult.accuracy * 100).toFixed(1) }}%</el-descriptions-item>
               <el-descriptions-item label="预防建议" :span="2">{{ diseaseResult.prevention_advice }}</el-descriptions-item>
               <el-descriptions-item label="改进措施" :span="2">
-                <el-tag v-for="(suggestion, index) in diseaseResult.suggestions.filter((s: string) => s)" :key="index" style="margin-right: 5px;">
+                <el-tag v-for="(suggestion, index) in filteredDiseaseSuggestions" :key="index" style="margin-right: 5px;">
                   {{ suggestion }}
                 </el-tag>
               </el-descriptions-item>
@@ -166,9 +166,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { predictGrowth as predictGrowthFn, predictEnvironment as predictEnvironmentFn, predictDisease as predictDiseaseFn } from '@/utils/prediction'
+import { 
+  predictGrowth as predictGrowthFn, 
+  predictEnvironment as predictEnvironmentFn, 
+  predictDisease as predictDiseaseFn,
+  type GrowthResult,
+  type EnvironmentResult,
+  type DiseaseResult
+} from '@/utils/prediction'
 
 const activeTab = ref('growth')
 
@@ -199,9 +206,14 @@ const diseaseForm = reactive({
 })
 
 // 预测结果
-const growthResult = ref<any>(null)
-const environmentResult = ref<any>(null)
-const diseaseResult = ref<any>(null)
+const growthResult = ref<GrowthResult | null>(null)
+const environmentResult = ref<EnvironmentResult | null>(null)
+const diseaseResult = ref<DiseaseResult | null>(null)
+
+// 过滤掉空字符串的建议
+const filteredDiseaseSuggestions = computed(() => {
+  return diseaseResult.value?.suggestions.filter((s: string) => s) || []
+})
 
 // 生长预测
 const predictGrowth = () => {
