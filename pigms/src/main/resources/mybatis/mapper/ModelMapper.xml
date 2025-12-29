@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhu.mapper.ModelMapper">
+    
+    <resultMap id="BaseResultMap" type="com.zhu.pojo.Model">
+        <id column="id" property="id"/>
+        <result column="model_name" property="modelName"/>
+        <result column="model_type" property="modelType"/>
+        <result column="model_path" property="modelPath"/>
+        <result column="accuracy" property="accuracy"/>
+        <result column="description" property="description"/>
+        <result column="input_features" property="inputFeatures"/>
+        <result column="output_features" property="outputFeatures"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="is_public" property="isPublic"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.zhu.pojo.Model" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_model 
+        (model_name, model_type, model_path, accuracy, description, input_features, 
+         output_features, creator_id, is_public, status, create_time, update_time)
+        VALUES 
+        (#{modelName}, #{modelType}, #{modelPath}, #{accuracy}, #{description}, #{inputFeatures},
+         #{outputFeatures}, #{creatorId}, #{isPublic}, #{status}, #{createTime}, #{updateTime})
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM tb_model WHERE id = #{id}
+    </delete>
+
+    <update id="updateByPrimaryKey" parameterType="com.zhu.pojo.Model">
+        UPDATE tb_model
+        SET model_name = #{modelName},
+            model_type = #{modelType},
+            model_path = #{modelPath},
+            accuracy = #{accuracy},
+            description = #{description},
+            input_features = #{inputFeatures},
+            output_features = #{outputFeatures},
+            is_public = #{isPublic},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * FROM tb_model WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM tb_model ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * FROM tb_model WHERE model_type = #{modelType} AND status = 'ACTIVE' ORDER BY create_time DESC
+    </select>
+
+    <select id="selectPublicModels" resultMap="BaseResultMap">
+        SELECT * FROM tb_model WHERE is_public = 1 AND status = 'ACTIVE' ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByCreatorId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * FROM tb_model WHERE creator_id = #{creatorId} ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT * FROM tb_model
+        <where>
+            <if test="modelName != null and modelName != ''">
+                AND model_name LIKE CONCAT('%', #{modelName}, '%')
+            </if>
+            <if test="modelType != null and modelType != ''">
+                AND model_type = #{modelType}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.zhu.pojo.Model">
+        UPDATE tb_model
+        <set>
+            <if test="modelName != null">
+                model_name = #{modelName},
+            </if>
+            <if test="modelType != null">
+                model_type = #{modelType},
+            </if>
+            <if test="modelPath != null">
+                model_path = #{modelPath},
+            </if>
+            <if test="accuracy != null">
+                accuracy = #{accuracy},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="inputFeatures != null">
+                input_features = #{inputFeatures},
+            </if>
+            <if test="outputFeatures != null">
+                output_features = #{outputFeatures},
+            </if>
+            <if test="isPublic != null">
+                is_public = #{isPublic},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>
+
+
+

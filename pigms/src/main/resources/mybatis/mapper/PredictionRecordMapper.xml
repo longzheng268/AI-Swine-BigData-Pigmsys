@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhu.mapper.PredictionRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.zhu.pojo.PredictionRecord">
+        <id column="id" property="id"/>
+        <result column="model_id" property="modelId"/>
+        <result column="model_name" property="modelName"/>
+        <result column="input_data" property="inputData"/>
+        <result column="output_data" property="outputData"/>
+        <result column="accuracy" property="accuracy"/>
+        <result column="execute_time" property="executeTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.zhu.pojo.PredictionRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_prediction_record 
+        (model_id, model_name, input_data, output_data, accuracy, execute_time, user_id, create_time)
+        VALUES 
+        (#{modelId}, #{modelName}, #{inputData}, #{outputData}, #{accuracy}, #{executeTime}, #{userId}, #{createTime})
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM tb_prediction_record WHERE id = #{id}
+    </delete>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM tb_prediction_record WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM tb_prediction_record ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * FROM tb_prediction_record WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByModelId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * FROM tb_prediction_record WHERE model_id = #{modelId} ORDER BY create_time DESC
+    </select>
+
+</mapper>
+
+
+
