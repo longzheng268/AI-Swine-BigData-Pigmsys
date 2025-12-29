@@ -199,12 +199,12 @@
                   <el-row :gutter="20" style="margin-top: 15px;">
                     <el-col :span="12">
                       <el-statistic title="A组 - 饲料转化率" :value="comparisonResult.groupA.conversionRate">
-                        <template #suffix>kg体重/kg饲料</template>
+                        <template #suffix>kg饲料/kg体重</template>
                       </el-statistic>
                     </el-col>
                     <el-col :span="12">
                       <el-statistic title="B组 - 饲料转化率" :value="comparisonResult.groupB.conversionRate">
-                        <template #suffix>kg体重/kg饲料</template>
+                        <template #suffix>kg饲料/kg体重</template>
                       </el-statistic>
                     </el-col>
                   </el-row>
@@ -398,7 +398,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, nextTick } from 'vue'
+import { ref, reactive, computed, nextTick, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { TrendCharts, Histogram, Warning, Document } from '@element-plus/icons-vue'
 import { 
@@ -481,6 +481,7 @@ interface ComparisonResult {
 }
 const comparisonResult = ref<ComparisonResult | null>(null)
 const comparisonChart = ref<HTMLElement | null>(null)
+let chartInstance: echarts.ECharts | null = null
 
 // 过滤掉空字符串的建议
 const filteredDiseaseSuggestions = computed(() => {
@@ -495,29 +496,29 @@ const compareGrowth = async () => {
     // 计算B组预测
     const resultB = predictGrowthFn(growthFormB)
 
-    // 计算饲料转化率 (预测体重 / 饲料量)
-    const conversionRateA = growthFormA.feed > 0 ? resultA.predicted_weight / growthFormA.feed : 0
-    const conversionRateB = growthFormB.feed > 0 ? resultB.predicted_weight / growthFormB.feed : 0
+    // 计算饲料转化率 (饲料量 / 预测体重) - 越低越好
+    const conversionRateA = resultA.predicted_weight > 0 ? growthFormA.feed / resultA.predicted_weight : 0
+    const conversionRateB = resultB.predicted_weight > 0 ? growthFormB.feed / resultB.predicted_weight : 0
 
-    // 判断哪组更优
-    const betterGroup = conversionRateA > conversionRateB ? 'A' : 'B'
+    // 判断哪组更优 (FCR越低越好)
+    const betterGroup = conversionRateA < conversionRateB ? 'A' : 'B'
     const difference = Math.abs(conversionRateA - conversionRateB)
-    const improvementPercent = ((difference / Math.min(conversionRateA, conversionRateB)) * 100).toFixed(1)
+    const improvementPercent = ((difference / Math.max(conversionRateA, conversionRateB)) * 100).toFixed(1)
 
     comparisonResult.value = {
       groupA: {
         predicted_weight: resultA.predicted_weight,
         growth_rate: resultA.growth_rate,
-        conversionRate: Math.round(conversionRateA * 100) / 100
+        conversionRate: Math.round(conversionRateA * 1000) / 1000
       },
       groupB: {
         predicted_weight: resultB.predicted_weight,
         growth_rate: resultB.growth_rate,
-        conversionRate: Math.round(conversionRateB * 100) / 100
+        conversionRate: Math.round(conversionRateB * 1000) / 1000
       },
       betterGroup,
-      conclusion: `方案${betterGroup}组的饲料转化率更高，优势明显`,
-      analysis: `方案${betterGroup}组每公斤饲料能产生${betterGroup === 'A' ? conversionRateA.toFixed(2) : conversionRateB.toFixed(2)}kg体重，比另一组高出${improvementPercent}%。建议采用方案${betterGroup}组的饲养策略，可以有效降低饲料成本，提高养殖效益。`
+      conclusion: `方案${betterGroup}组的饲料转化率更优，效率更高`,
+      analysis: `方案${betterGroup}组每公斤体重增长仅需${betterGroup === 'A' ? conversionRateA.toFixed(3) : conversionRateB.toFixed(3)}kg饲料，比另一组节省${improvementPercent}%。采用方案${betterGroup}组的饲养策略可以有效降低饲料成本，提高养殖效益。`
     }
 
     // 等待DOM更新后渲染图表
@@ -535,7 +536,12 @@ const compareGrowth = async () => {
 const renderComparisonChart = () => {
   if (!comparisonChart.value || !comparisonResult.value) return
 
-  const chartInstance = echarts.init(comparisonChart.value)
+  // 如果已有实例，先销毁
+  if (chartInstance) {
+    chartInstance.dispose()
+  }
+
+  chartInstance = echarts.init(comparisonChart.value)
   
   const option = {
     title: {
@@ -622,10 +628,19 @@ const renderComparisonChart = () => {
   chartInstance.setOption(option)
 
   // 响应式调整
-  window.addEventListener('resize', () => {
-    chartInstance.resize()
-  })
+  const resizeHandler = () => {
+    chartInstance?.resize()
+  }
+  window.addEventListener('resize', resizeHandler)
 }
+
+// 清理资源
+onBeforeUnmount(() => {
+  if (chartInstance) {
+    chartInstance.dispose()
+    chartInstance = null
+  }
+})
 
 // 生长预测
 const predictGrowth = () => {
