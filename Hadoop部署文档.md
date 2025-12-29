@@ -8,8 +8,8 @@
 - **硬盘**: 100GB以上可用空间
 
 ### 1.2 软件要求
-- **操作系统**: CentOS 7 / Ubuntu 20.04
-- **Java版本**: JDK 1.8
+- **操作系统**: macOS (ARM64/Intel), Linux, Windows, CentOS 7 / Ubuntu 20.04
+- **Java版本**: JDK 11 或更高版本
 - **SSH**: 已安装并配置免密登录（集群模式需要）
 
 ## 二、单机模式部署（适用于开发测试）
@@ -23,13 +23,13 @@ sudo passwd hadoop
 # 切换到hadoop用户
 su - hadoop
 
-# 下载Hadoop 2.10.2（与项目配置一致）
+# 下载Hadoop 3.4.3（与项目配置一致）
 cd /opt
-sudo wget https://archive.apache.org/dist/hadoop/common/hadoop-2.10.2/hadoop-2.10.2.tar.gz
+sudo wget https://archive.apache.org/dist/hadoop/common/hadoop-3.4.3/hadoop-3.4.3.tar.gz
 
 # 解压
-sudo tar -xzf hadoop-2.10.2.tar.gz
-sudo mv hadoop-2.10.2 /opt/hadoop
+sudo tar -xzf hadoop-3.4.3.tar.gz
+sudo mv hadoop-3.4.3 /opt/hadoop
 sudo chown -R hadoop:hadoop /opt/hadoop
 ```
 
@@ -42,7 +42,7 @@ vi ~/.bashrc
 export HADOOP_HOME=/opt/hadoop
 export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
 export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
-export JAVA_HOME=/opt/jdk1.8
+export JAVA_HOME=/opt/jdk11  # 或你的JDK 11安装路径
 
 # 生效配置
 source ~/.bashrc
@@ -161,7 +161,7 @@ vi yarn-site.xml
 ```bash
 vi hadoop-env.sh
 # 找到并修改JAVA_HOME
-export JAVA_HOME=/opt/jdk1.8
+export JAVA_HOME=/opt/jdk11  # 或你的JDK 11安装路径
 ```
 
 ### 2.4 创建必要目录
@@ -454,6 +454,8 @@ hadoop:
     framework: yarn
   user: hadoop
 ```
+
+> **注意**: 本项目使用 Hadoop 3.4.3 版本
 
 ### 9.2 创建HDFS目录
 ```bash
