@@ -482,6 +482,7 @@ interface ComparisonResult {
 const comparisonResult = ref<ComparisonResult | null>(null)
 const comparisonChart = ref<HTMLElement | null>(null)
 let chartInstance: echarts.ECharts | null = null
+let resizeHandler: (() => void) | null = null
 
 // 过滤掉空字符串的建议
 const filteredDiseaseSuggestions = computed(() => {
@@ -627,8 +628,11 @@ const renderComparisonChart = () => {
 
   chartInstance.setOption(option)
 
-  // 响应式调整
-  const resizeHandler = () => {
+  // 响应式调整 - 先移除旧的监听器
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+  }
+  resizeHandler = () => {
     chartInstance?.resize()
   }
   window.addEventListener('resize', resizeHandler)
@@ -636,6 +640,10 @@ const renderComparisonChart = () => {
 
 // 清理资源
 onBeforeUnmount(() => {
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+    resizeHandler = null
+  }
   if (chartInstance) {
     chartInstance.dispose()
     chartInstance = null
