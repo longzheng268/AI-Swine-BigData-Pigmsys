@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <a href="/" style="padding-left: 30px">
-      <img src="../../assets/logo.jpg" alt="" class="logo" />
+      <img :src="logoImage" alt="" class="logo" />
       <span class="title">基于Hadoop的生猪智慧养殖系统</span>
     </a>
 
@@ -64,6 +64,7 @@ import { logout } from "../../api/login";
 import pwdApi from "../../api/password";
 import { ElMessage } from "element-plus";
 import { ArrowDown } from "@element-plus/icons-vue";
+import logoImage from "../../assets/logo.jpg";
 
 export default {
   components: {
@@ -103,6 +104,7 @@ export default {
     };
 
     return {
+      logoImage,
       user: getUserInfo(),
       dialogFormVisible: false,
       ruleForm: {
