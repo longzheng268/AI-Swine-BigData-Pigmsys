@@ -10,7 +10,7 @@
 
       <div class="content">
         <el-row :gutter="20">
-          <el-col :span="8">
+          <el-col :xs="24" :sm="24" :md="8" :lg="8" style="margin-bottom: 20px;">
             <el-card shadow="hover" class="feature-card">
               <div class="feature-icon">
                 <el-icon :size="48" color="#409EFF"><TrendCharts /></el-icon>
@@ -21,7 +21,7 @@
             </el-card>
           </el-col>
 
-          <el-col :span="8">
+          <el-col :xs="24" :sm="24" :md="8" :lg="8" style="margin-bottom: 20px;">
             <el-card shadow="hover" class="feature-card">
               <div class="feature-icon">
                 <el-icon :size="48" color="#67C23A"><Histogram /></el-icon>
@@ -32,7 +32,7 @@
             </el-card>
           </el-col>
 
-          <el-col :span="8">
+          <el-col :xs="24" :sm="24" :md="8" :lg="8" style="margin-bottom: 20px;">
             <el-card shadow="hover" class="feature-card">
               <div class="feature-icon">
                 <el-icon :size="48" color="#F56C6C"><Warning /></el-icon>
@@ -49,7 +49,7 @@
         <div class="info-section">
           <h3>系统特点</h3>
           <el-row :gutter="20">
-            <el-col :span="12">
+            <el-col :xs="24" :sm="24" :md="12" :lg="12">
               <div class="info-item">
                 <el-icon color="#409EFF"><CircleCheck /></el-icon>
                 <span>前端算法集成 - JavaScript 实现，无需 Python 服务依赖</span>
@@ -63,7 +63,7 @@
                 <span>数据可视化 - 直观的结果展示</span>
               </div>
             </el-col>
-            <el-col :span="12">
+            <el-col :xs="24" :sm="24" :md="12" :lg="12">
               <div class="info-item">
                 <el-icon color="#67C23A"><CircleCheck /></el-icon>
                 <span>智能建议 - 基于数据分析的专业建议</span>
@@ -111,24 +111,27 @@ const goToPrediction = () => {
 
 <style scoped>
 .home-container {
-  padding: 20px;
+  padding: 0;
+  max-width: 100%;
 }
 
 .welcome-card {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .card-header h2 {
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
   font-size: 28px;
   color: #333;
+  font-weight: 600;
 }
 
 .card-header p {
   margin: 0;
   font-size: 16px;
-  color: #666;
+  color: #999;
+  font-style: italic;
 }
 
 .content {
@@ -138,7 +141,8 @@ const goToPrediction = () => {
 .feature-card {
   text-align: center;
   padding: 20px;
-  transition: transform 0.3s;
+  transition: all 0.3s;
+  height: 100%;
 }
 
 .feature-card:hover {
@@ -150,15 +154,17 @@ const goToPrediction = () => {
 }
 
 .feature-card h3 {
-  margin: 10px 0;
+  margin: 15px 0;
   font-size: 20px;
   color: #333;
+  font-weight: 600;
 }
 
 .feature-card p {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: #666;
-  line-height: 1.6;
+  line-height: 1.8;
+  min-height: 48px;
 }
 
 .info-section {
@@ -169,6 +175,7 @@ const goToPrediction = () => {
   margin-bottom: 20px;
   font-size: 20px;
   color: #333;
+  font-weight: 600;
 }
 
 .info-item {
@@ -181,6 +188,7 @@ const goToPrediction = () => {
 
 .info-item .el-icon {
   margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .tech-stack {
@@ -188,13 +196,43 @@ const goToPrediction = () => {
 }
 
 .tech-stack h3 {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   font-size: 20px;
   color: #333;
+  font-weight: 600;
 }
 
 .tech-stack .el-tag {
   margin: 5px;
   font-size: 14px;
+}
+
+/* 响应式设计 */
+@media (max-width: 992px) {
+  .card-header h2 {
+    font-size: 24px;
+  }
+
+  .feature-card p {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-header h2 {
+    font-size: 20px;
+  }
+
+  .card-header p {
+    font-size: 14px;
+  }
+
+  .info-item {
+    font-size: 13px;
+  }
+
+  .feature-card h3 {
+    font-size: 18px;
+  }
 }
 </style>
