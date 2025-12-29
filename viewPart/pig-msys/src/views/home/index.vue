@@ -1,10 +1,16 @@
 <template>
   <div>
-    <h1 style="width: 100%;text-align: center">欢迎来到基于Hadoop的生猪智慧养殖系统</h1>
-    
+    <h1 style="width: 100%; text-align: center">
+      欢迎来到基于Hadoop的生猪智慧养殖系统
+    </h1>
+
     <!-- 可视化大屏快捷入口 -->
     <div class="dashboard-entrance">
-      <el-card class="big-screen-card" shadow="hover" @click.native="goToBigScreen">
+      <el-card
+        class="big-screen-card"
+        shadow="hover"
+        @click.native="goToBigScreen"
+      >
         <div class="card-content">
           <div class="icon-wrapper">
             <i class="el-icon-monitor"></i>
@@ -33,86 +39,85 @@
         </div>
       </el-card>
     </div>
-    
-    <!--放置图表-->
-    <div ref="chartDemodiv" style="width: 100%;height: 500px">
 
-    </div>
+    <!--放置图表-->
+    <div ref="chartDemodiv" style="width: 100%; height: 500px"></div>
   </div>
 </template>
 
 <script>
-import * as echarts from 'echarts'
-import {getTypeSum} from "../../api/piginfo";
+import * as echarts from "echarts";
+import { getTypeSum } from "../../api/piginfo";
 export default {
   name: "index",
-  data(){
-    return{
-      chartDemo:null,
-      pigTypeData:{
-        pigType:[],
-        pigTypeSum:[],
-      }
-    }
+  data() {
+    return {
+      chartDemo: null,
+      pigTypeData: {
+        pigType: [],
+        pigTypeSum: [],
+      },
+    };
   },
-  computed:{
-    options(){
-      const option={
-        title:{
-          text:'各类猪的量对比',
-          left:'center',
-          textStyle:{
-            color:'#12acf3'
-          }
+  computed: {
+    options() {
+      const option = {
+        title: {
+          text: "各类猪的量对比",
+          left: "center",
+          textStyle: {
+            color: "#12acf3",
+          },
         },
-        tooltip:{
-          trigger:'axis',
-          axisPointer:{
-            type:'shadow'
-          }
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow",
+          },
         },
-        legend:{
-          top:30,
-          data:[
+        legend: {
+          top: 30,
+          data: [
             {
-              name:'拥有数量',
-              icon:'circle',
+              name: "拥有数量",
+              icon: "circle",
               textStyle: {
-                color: 'red',
-                fontFamily:'微软雅黑',
-                fontSize:16
-              }
-            }
-          ]
+                color: "red",
+                fontFamily: "微软雅黑",
+                fontSize: 16,
+              },
+            },
+          ],
         },
-        xAxis:{
-          type:'category',
-          data:this.pigTypeData.pigType || []
+        xAxis: {
+          type: "category",
+          data: this.pigTypeData.pigType || [],
         },
-        yAxis:{
-          type:'value',
-          min:100,
-          interval:50
+        yAxis: {
+          type: "value",
+          min: 100,
+          interval: 50,
         },
         series: [
           {
-            name: '拥有数量',
+            name: "拥有数量",
             data: this.pigTypeData.pigTypeSum || [],
-            type: 'bar',
-            color: '#07f6f6'
-          }
-        ].filter(item => item && item.type && typeof item.type === 'string')
-          .map(item => ({
+            type: "bar",
+            color: "#07f6f6",
+          },
+        ]
+          .filter((item) => item && item.type && typeof item.type === "string")
+          .map((item) => ({
             ...item,
-            type: item.type || 'bar' // 确保 type 总是存在
-          }))
-      }
-      return option
-    }
+            type: item.type || "bar", // 确保 type 总是存在
+          })),
+      };
+      return option;
+    },
   },
-  watch:{
-    options(newVal,oldVal){
-      if(newVal!==oldVal){
+  watch: {
+    options(newVal, oldVal) {
+      if (newVal !== oldVal) {
         // 检查图表实例是否存在
         if (this.chartDemo && !this.chartDemo.isDisposed()) {
           try {
@@ -120,143 +125,160 @@ export default {
             const safeOptions = {
               ...this.options,
               series: (this.options.series || [])
-                .filter(item => item && item.type && typeof item.type === 'string')
-                .map(item => ({
+                .filter(
+                  (item) => item && item.type && typeof item.type === "string",
+                )
+                .map((item) => ({
                   ...item,
-                  type: item.type || 'bar' // 确保 type 总是存在
-                }))
-            }
+                  type: item.type || "bar", // 确保 type 总是存在
+                })),
+            };
             // 如果 series 为空，使用默认配置
             if (!safeOptions.series || safeOptions.series.length === 0) {
-              safeOptions.series = [{
-                name: '拥有数量',
-                data: [],
-                type: 'bar',
-                color: '#07f6f6'
-              }]
+              safeOptions.series = [
+                {
+                  name: "拥有数量",
+                  data: [],
+                  type: "bar",
+                  color: "#07f6f6",
+                },
+              ];
             }
             // 使用 notMerge: false 来合并配置，避免完全替换导致的问题
-            this.chartDemo.setOption(safeOptions, false)
+            this.chartDemo.setOption(safeOptions, false);
           } catch (error) {
-            console.error('更新图表配置失败:', error)
+            console.error("更新图表配置失败:", error);
           }
         }
       }
-    }
+    },
   },
   created() {
-    getTypeSum().then(response=>{
-      const resp=response.data
-      if(resp.flag){
-        this.pigTypeData.pigType=resp.data.pigType || []
-        this.pigTypeData.pigTypeSum=resp.data.pigTypeSum || []
-      }else {
-        this.$message({
-            message:resp.message || '获取数据失败',
-          type:'warning'
-        })
-      }
-    }).catch(error => {
-      console.error('获取猪类型统计失败:', error)
-      this.$message.error('获取数据失败：' + (error.response?.data?.message || error.message))
-    })
+    getTypeSum()
+      .then((response) => {
+        const resp = response.data;
+        if (resp.flag) {
+          this.pigTypeData.pigType = resp.data.pigType || [];
+          this.pigTypeData.pigTypeSum = resp.data.pigTypeSum || [];
+        } else {
+          this.$message({
+            message: resp.message || "获取数据失败",
+            type: "warning",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("获取猪类型统计失败:", error);
+        this.$message.error(
+          "获取数据失败：" + (error.response?.data?.message || error.message),
+        );
+      });
   },
   mounted() {
-    this.drawLine()
+    this.drawLine();
   },
   beforeUnmount() {
     // Vue 3 生命周期钩子，组件卸载前清理
-    this.destroyChart()
+    this.destroyChart();
   },
-  methods:{
-    drawLine(){
+  methods: {
+    drawLine() {
       try {
         // 检查 DOM 元素是否存在
         if (!this.$refs.chartDemodiv) {
-          console.warn('图表容器DOM节点未就绪')
+          console.warn("图表容器DOM节点未就绪");
           this.$nextTick(() => {
             if (this.$refs.chartDemodiv) {
-              this.drawLine()
+              this.drawLine();
             }
-          })
-          return
+          });
+          return;
         }
-        
-        this.chartDemo = echarts.init(this.$refs.chartDemodiv)
+
+        this.chartDemo = echarts.init(this.$refs.chartDemodiv);
         // 确保 options.series 是有效的数组
         const safeOptions = {
           ...this.options,
           series: (this.options.series || [])
-            .filter(item => item && item.type && typeof item.type === 'string')
-            .map(item => ({
+            .filter(
+              (item) => item && item.type && typeof item.type === "string",
+            )
+            .map((item) => ({
               ...item,
-              type: item.type || 'bar' // 确保 type 总是存在
-            }))
-        }
+              type: item.type || "bar", // 确保 type 总是存在
+            })),
+        };
         // 如果 series 为空，添加默认配置
         if (!safeOptions.series || safeOptions.series.length === 0) {
-          safeOptions.series = [{
-            name: '拥有数量',
-            data: [],
-            type: 'bar',
-            color: '#07f6f6'
-          }]
+          safeOptions.series = [
+            {
+              name: "拥有数量",
+              data: [],
+              type: "bar",
+              color: "#07f6f6",
+            },
+          ];
         }
         // 首次设置使用 notMerge: true，后续更新使用 false 来合并
-        this.chartDemo.setOption(safeOptions, true)
-        window.addEventListener("resize", this.handleResize)
+        this.chartDemo.setOption(safeOptions, true);
+        window.addEventListener("resize", this.handleResize);
       } catch (error) {
-        console.error('初始化图表失败:', error)
+        console.error("初始化图表失败:", error);
       }
     },
     handleResize() {
       // 检查图表是否存在且未销毁
       if (this.chartDemo && !this.chartDemo.isDisposed()) {
         try {
-          this.chartDemo.resize()
+          this.chartDemo.resize();
         } catch (error) {
-          console.error('图表 resize 失败:', error)
+          console.error("图表 resize 失败:", error);
           // 如果 resize 失败，尝试修复配置
           try {
-            const currentOption = this.chartDemo.getOption()
-            let allSeries = []
+            const currentOption = this.chartDemo.getOption();
+            let allSeries = [];
             if (currentOption && currentOption.series) {
               if (Array.isArray(currentOption.series[0])) {
-                allSeries = currentOption.series[0]
+                allSeries = currentOption.series[0];
               } else {
-                allSeries = currentOption.series
+                allSeries = currentOption.series;
               }
-              const validSeries = allSeries.filter(item => item && item.type && typeof item.type === 'string')
+              const validSeries = allSeries.filter(
+                (item) => item && item.type && typeof item.type === "string",
+              );
               if (validSeries.length > 0) {
-                this.chartDemo.setOption({
-                  series: validSeries.map(item => ({
-                    ...item,
-                    type: item.type || 'bar'
-                  }))
-                }, true)
-                this.chartDemo.resize()
+                this.chartDemo.setOption(
+                  {
+                    series: validSeries.map((item) => ({
+                      ...item,
+                      type: item.type || "bar",
+                    })),
+                  },
+                  true,
+                );
+                this.chartDemo.resize();
               }
             }
           } catch (fixError) {
-            console.error('修复图表配置失败:', fixError)
+            console.error("修复图表配置失败:", fixError);
           }
         }
       }
     },
     destroyChart() {
       // 移除事件监听
-      window.removeEventListener("resize", this.handleResize)
+      window.removeEventListener("resize", this.handleResize);
       // 销毁图表实例
       if (this.chartDemo && !this.chartDemo.isDisposed()) {
-        this.chartDemo.dispose()
-        this.chartDemo = null
+        this.chartDemo.dispose();
+        this.chartDemo = null;
       }
     },
     goToBigScreen() {
-      this.$router.push('/big-screen')
-    }
-  }
-}
+      this.$router.push("/big-screen");
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -296,7 +318,8 @@ export default {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {

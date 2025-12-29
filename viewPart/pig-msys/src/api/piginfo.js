@@ -1,53 +1,53 @@
 //图书信息列表的接口
-import myaxios from "../utils/myaxios"
+import myaxios from "../utils/myaxios";
 
-export function getPigList(){
-    return myaxios({
-        url:'/pigInfo/list',
-        method:'get'
-    })
+export function getPigList() {
+  return myaxios({
+    url: "/pigInfo/list",
+    method: "get",
+  });
 }
-export function search(page,size,searchWhere) {
-    return myaxios({
-        url:`/pigInfo/list/search/${page}/${size}`,
-        method:'post',
-        data:searchWhere
-    })
+export function search(page, size, searchWhere) {
+  return myaxios({
+    url: `/pigInfo/list/search/${page}/${size}`,
+    method: "post",
+    data: searchWhere,
+  });
 }
 
 export function add(pigForm) {
-    return myaxios({
-        url:'/addPig',
-        method:'post',
-        data:pigForm
-    })
+  return myaxios({
+    url: "/addPig",
+    method: "post",
+    data: pigForm,
+  });
 }
 
 export function getPigById(id) {
-    return myaxios({
-        url:`/pigInfo/${id}`,
-        method:'get'
-    })
+  return myaxios({
+    url: `/pigInfo/${id}`,
+    method: "get",
+  });
 }
 
 export function updatePigInfo(pigObj) {
-    return myaxios({
-        url:`/pigInfo/${pigObj.id}`,
-        method:'put',
-        data:pigObj
-    })
+  return myaxios({
+    url: `/pigInfo/${pigObj.id}`,
+    method: "put",
+    data: pigObj,
+  });
 }
 
 export function deletePigById(id) {
-    return myaxios({
-        url:`pigInfo/${id}`,
-        method:'delete'
-    })
+  return myaxios({
+    url: `pigInfo/${id}`,
+    method: "delete",
+  });
 }
 
 export function getTypeSum() {
-    return myaxios({
-        url:'/pig/getTypeSum',
-        method:'get'
-    })
+  return myaxios({
+    url: "/pig/getTypeSum",
+    method: "get",
+  });
 }
