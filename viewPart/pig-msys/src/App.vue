@@ -5,7 +5,7 @@
 </template>
 
 <style lang="scss">
-body{
+body {
   font-family: "微软雅黑";
   margin: 0 auto;
 }

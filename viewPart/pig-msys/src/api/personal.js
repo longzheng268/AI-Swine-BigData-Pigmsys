@@ -5,7 +5,7 @@ export default {
   getPersonalInfoById(id) {
     return myaxios({
       url: `/personalInfo/${id}`,
-      method: 'get'
-    })
+      method: "get",
+    });
   },
-}
+};
