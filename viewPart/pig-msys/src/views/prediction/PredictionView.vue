@@ -309,8 +309,9 @@ const predictGrowth = () => {
   try {
     growthResult.value = predictGrowthFn(growthForm)
     ElMessage.success('生长预测完成')
-  } catch (error: any) {
-    ElMessage.error('预测失败: ' + error.message)
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : '未知错误'
+    ElMessage.error('预测失败: ' + errorMsg)
   }
 }
 
@@ -319,8 +320,9 @@ const predictEnvironment = () => {
   try {
     environmentResult.value = predictEnvironmentFn(environmentForm)
     ElMessage.success('环境评价完成')
-  } catch (error: any) {
-    ElMessage.error('评价失败: ' + error.message)
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : '未知错误'
+    ElMessage.error('评价失败: ' + errorMsg)
   }
 }
 
@@ -329,8 +331,9 @@ const predictDisease = () => {
   try {
     diseaseResult.value = predictDiseaseFn(diseaseForm)
     ElMessage.success('风险预测完成')
-  } catch (error: any) {
-    ElMessage.error('预测失败: ' + error.message)
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : '未知错误'
+    ElMessage.error('预测失败: ' + errorMsg)
   }
 }
 

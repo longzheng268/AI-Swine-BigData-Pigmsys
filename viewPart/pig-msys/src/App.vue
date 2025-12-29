@@ -3,7 +3,7 @@ import { RouterView, useRouter, useRoute } from 'vue-router'
 import { ref, computed } from 'vue'
 import { clearAuth, isAuthenticated, getUserInfo } from '@/utils/auth'
 import { ElMessage } from 'element-plus'
-import { Menu as IconMenu, Expand, Fold, HomeFilled, TrendCharts, InfoFilled } from '@element-plus/icons-vue'
+import { Expand, Fold, HomeFilled, TrendCharts, InfoFilled } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
