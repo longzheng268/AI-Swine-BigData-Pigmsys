@@ -427,8 +427,8 @@ const getDiseaseTagType = (level: string) => {
 }
 
 @media (max-width: 480px) {
-  :deep(.el-form) {
-    label-width: 120px !important;
+  :deep(.el-form .el-form-item__label) {
+    width: 120px;
   }
 
   .result-box h3 {

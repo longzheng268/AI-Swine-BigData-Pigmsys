@@ -99,11 +99,11 @@ html, body, #app {
 }
 
 /* 顶部Header样式 */
-.main-header {
+.main-header.el-header {
   background: linear-gradient(135deg, #409EFF 0%, #3a8ee6 100%);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   padding: 0;
-  height: 60px !important;
+  height: 60px;
   display: flex;
   align-items: center;
   z-index: 100;
