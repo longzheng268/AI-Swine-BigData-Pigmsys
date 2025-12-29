@@ -12,6 +12,7 @@ import InfoPerson from "../views/personal/InfoPerson";
 import EnvironmentData from "../views/environment/EnvironmentData";
 import DataUpload from "../views/upload/DataUpload";
 import PredictionAnalysis from "../views/prediction/PredictionAnalysis";
+import ComparisonAnalysis from "../views/prediction/ComparisonAnalysis";
 import DataVisualization from "../views/analysis/DataVisualization";
 import BigScreen from "../views/dashboard/BigScreen";
 
@@ -98,6 +99,12 @@ const routes = [
         name: 'prediction',
         component: PredictionAnalysis,
         meta: {title: '预测分析'}
+      },
+      {
+        path: '/comparison',
+        name: 'comparison',
+        component: ComparisonAnalysis,
+        meta: {title: '方案对比'}
       },
       {
         path: '/visualization',

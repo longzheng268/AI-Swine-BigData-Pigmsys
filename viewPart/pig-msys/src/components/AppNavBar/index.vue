@@ -59,6 +59,7 @@
           </template>
           <el-menu-item-group>
             <el-menu-item index="/prediction">预测分析</el-menu-item>
+            <el-menu-item index="/comparison">方案对比</el-menu-item>
             <el-menu-item index="/upload">数据导入</el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
