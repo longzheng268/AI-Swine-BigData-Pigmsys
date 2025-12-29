@@ -1,5 +1,5 @@
 <template>
-  <div id="login-container">
+  <div id="login-container" :style="loginContainerStyle">
     <el-form
       ref="form"
       :rules="rules"
@@ -132,6 +132,8 @@ import { login, getUserInfo, aVerify } from "../../api/login";
 import myaxios from "../../utils/myaxios";
 import qs from "qs";
 import { ElMessage } from "element-plus";
+import bgImage from "../../assets/bg.png";
+
 export default {
   name: "index",
   data() {
@@ -147,6 +149,7 @@ export default {
     };
 
     return {
+      bgImage,
       form: {
         username: "",
         userpassword: "",
@@ -328,6 +331,19 @@ export default {
       });
     },
   },
+  computed: {
+    loginContainerStyle() {
+      return {
+        backgroundImage: `url(${this.bgImage})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
+      };
+    }
+  },
   // mounted(){
   //   const obj={
   //     name:'小明',
@@ -343,11 +359,7 @@ export default {
 
 <style scoped>
 #login-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: url("../../assets/bg.png") no-repeat center;
-  background-size: cover;
+  /* Background image is now applied via computed style */
 }
 .login-form {
   width: 350px;

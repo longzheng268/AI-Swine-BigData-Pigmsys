@@ -26,7 +26,7 @@
     <div class="screen-header">
       <div class="header-left">
         <div class="logo-area">
-          <img src="@/assets/logo.jpg" alt="logo" class="logo" />
+          <img :src="logoImage" alt="logo" class="logo" />
         </div>
         <el-button
           type="primary"
@@ -282,11 +282,13 @@
 <script>
 import * as echarts from "echarts";
 import { getDashboardData } from "@/api/dashboard";
+import logoImage from "@/assets/logo.jpg";
 
 export default {
   name: "BigScreen",
   data() {
     return {
+      logoImage,
       bgColor: "#0A0E27",
       currentDate: "",
       currentTime: "",
