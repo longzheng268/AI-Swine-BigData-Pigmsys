@@ -334,13 +334,7 @@ export default {
   computed: {
     loginContainerStyle() {
       return {
-        backgroundImage: `url(${this.bgImage})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        position: 'absolute',
-        width: '100%',
-        height: '100%'
+        backgroundImage: `url(${this.bgImage})`
       };
     }
   },
@@ -359,7 +353,13 @@ export default {
 
 <style scoped>
 #login-container {
-  /* Background image is now applied via computed style */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  /* Background image is applied via computed style */
 }
 .login-form {
   width: 350px;
