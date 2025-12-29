@@ -27,24 +27,24 @@
 
 ### 前端（Frontend）
 
-- **框架**: Vue 3.5.x
-- **构建工具**: Vite
-- **语言**: TypeScript
+- **框架**: Vue 3.3.x
+- **构建工具**: Vue CLI 5.0.x (计划迁移至 Vite)
+- **语言**: JavaScript (ES6+)
 - **路由**: Vue Router 4.x
-- **状态管理**: Pinia
-- **UI 组件**: Element Plus 2.13.x
-- **图表**: ECharts 6.x
-- **HTTP 客户端**: Axios
+- **状态管理**: Vuex 4.x
+- **UI 组件**: Element Plus 2.4.x
+- **图表**: ECharts 5.x
+- **HTTP 客户端**: Axios 0.27.x
 - **开发端口**: 8081
 
-### Python 服务（可选）
+### Python 服务（已弃用）
 
-- **框架**: Flask 2.3.0
-- **跨域**: Flask-CORS
-- **机器学习**: scikit-learn, NumPy
-- **服务端口**: 5001
+- ~~**框架**: Flask 2.3.0~~
+- ~~**跨域**: Flask-CORS~~
+- ~~**机器学习**: scikit-learn, NumPy~~
+- ~~**服务端口**: 5000/5001~~
 
-> **注意**: 预测算法已迁移到前端 JavaScript 实现，Python 服务为可选组件。
+> **✨ 重要更新**: 预测算法已完全迁移到前端 JavaScript 实现，**无需启动 Python 服务**。前端算法提供毫秒级响应速度，简化系统架构，降低部署复杂度。
 
 ## 📁 项目结构
 
@@ -70,13 +70,12 @@ AI-Swine-BigData-Pigmsys/
 │   │   ├── components/       # 公共组件
 │   │   ├── api/              # API 接口封装
 │   │   ├── router/           # 路由配置
-│   │   └── utils/            # 工具函数（含预测算法）
-│   └── vite.config.ts        # Vite 配置
+│   │   └── utils/            # 工具函数
+│   │       └── prediction.js # 🎯 前端预测算法（核心）
+│   └── vue.config.js         # Vue CLI 配置（代理 8080 端口）
 │
 ├── mysql/                     # 数据库相关
-│   ├── pigms.sql             # 主数据库脚本
-│   └── pythonService/        # Python 预测服务（可选）
-│       └── app.py
+│   └── pigms.sql             # 主数据库脚本
 │
 └── README.md                  # 本文件
 ```
@@ -88,9 +87,10 @@ AI-Swine-BigData-Pigmsys/
 - **操作系统**: macOS (ARM64/Intel), Linux, Windows
 - **JDK**: 11 或更高版本
 - **Maven**: 3.6+
-- **Node.js**: 20.x 或更高版本
+- **Node.js**: 16.x 或更高版本 (推荐 18.x 或 20.x)
+- **npm**: 8.x 或更高版本
 - **MySQL**: 8.0
-- **Hadoop**: 3.4.3
+- **Hadoop**: 3.4.3 (可选，用于大数据分析)
 
 ### 推荐配置（macOS）
 

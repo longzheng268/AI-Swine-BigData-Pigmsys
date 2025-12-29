@@ -11,6 +11,18 @@
           </template>
           
           <el-form :model="predictionForm" label-width="120px">
+            <el-form-item label="算法模式">
+              <el-switch 
+                v-model="useFrontendAlgorithm" 
+                active-text="前端算法 (快速)" 
+                inactive-text="后端服务"
+                @change="handleAlgorithmModeChange">
+              </el-switch>
+              <span style="margin-left: 10px; color: #909399; font-size: 12px;">
+                {{ useFrontendAlgorithm ? '毫秒级响应，无需后端' : '支持复杂模型' }}
+              </span>
+            </el-form-item>
+            
             <el-form-item label="模型类型">
               <el-select v-model="modelType" placeholder="请选择模型类型" @change="handleModelTypeChange">
                 <el-option label="生猪生长预测" value="GROWTH"></el-option>
@@ -231,7 +243,8 @@
 </template>
 
 <script>
-import { predict } from '@/utils/prediction'
+import { getAllModels, getModelsByType, predict as apiPredict } from '@/api/prediction'
+import { predict as frontendPredict } from '@/utils/prediction'
 
 export default {
   name: 'PredictionAnalysis',
@@ -243,6 +256,7 @@ export default {
       filteredModels: [],
       predicting: false,
       predictionResult: null,
+      useFrontendAlgorithm: true, // 默认使用前端算法，可切换
       predictionForm: {
         // 生猪生长预测
         age: 100,
@@ -262,9 +276,8 @@ export default {
     }
   },
   created() {
-    // 使用前端算法，不需要从后端加载模型列表
-    // 初始化模拟模型列表用于UI展示
-    this.initializeFrontendModels()
+    // 尝试从后端加载模型，如果失败则使用前端算法
+    this.loadModels()
   },
   methods: {
     initializeFrontendModels() {
@@ -290,6 +303,7 @@ export default {
         }
       ]
       this.filterModels()
+      this.useFrontendAlgorithm = true
     },
     loadModels() {
       getAllModels().then(response => {
@@ -297,12 +311,16 @@ export default {
         if (resp.flag) {
           this.allModels = resp.data || []
           this.filterModels()
+          this.useFrontendAlgorithm = false // 使用后端API
         } else {
-          this.$message.warning(resp.message || '获取模型列表失败')
+          // 后端模型加载失败，使用前端算法
+          console.log('后端模型不可用，使用前端算法')
+          this.initializeFrontendModels()
         }
       }).catch(error => {
-        console.error('获取模型列表失败:', error)
-        this.$message.error('获取模型列表失败：' + (error.response?.data?.message || error.message))
+        // 后端服务不可用，自动切换到前端算法
+        console.log('后端服务不可用，使用前端算法:', error.message)
+        this.initializeFrontendModels()
       })
     },
     filterModels() {
@@ -318,6 +336,17 @@ export default {
     handleModelChange() {
       this.predictionResult = null
     },
+    handleAlgorithmModeChange() {
+      // 切换算法模式时重新加载模型
+      if (this.useFrontendAlgorithm) {
+        this.initializeFrontendModels()
+        this.$message.info('已切换到前端算法模式')
+      } else {
+        this.loadModels()
+        this.$message.info('已切换到后端服务模式')
+      }
+      this.predictionResult = null
+    },
     handlePredict() {
       if (!this.selectedModelId) {
         this.$message.warning('请选择模型')
@@ -326,17 +355,35 @@ export default {
 
       this.predicting = true
       
-      // 使用前端算法进行预测
-      try {
-        // 模拟网络延迟，提供更好的用户体验
-        setTimeout(() => {
-          this.predictionResult = predict(this.modelType, this.predictionForm)
+      // 根据配置选择使用前端算法还是后端API
+      if (this.useFrontendAlgorithm) {
+        // 使用前端算法进行预测
+        try {
+          // 模拟网络延迟，提供更好的用户体验
+          setTimeout(() => {
+            this.predictionResult = frontendPredict(this.modelType, this.predictionForm)
+            this.predicting = false
+            this.$message.success('预测完成 (前端算法)')
+          }, 500)
+        } catch (error) {
           this.predicting = false
-          this.$message.success('预测完成')
-        }, 500)
-      } catch (error) {
-        this.predicting = false
-        this.$message.error('预测失败：' + error.message)
+          this.$message.error('预测失败：' + error.message)
+        }
+      } else {
+        // 使用后端API进行预测
+        apiPredict(this.selectedModelId, this.predictionForm).then(response => {
+          const resp = response.data
+          if (resp.flag) {
+            this.predictionResult = JSON.parse(resp.data.outputData)
+            this.$message.success('预测完成 (后端服务)')
+          } else {
+            this.$message.error(resp.message || '预测失败')
+          }
+        }).catch(error => {
+          this.$message.error('预测失败：' + error.message)
+        }).finally(() => {
+          this.predicting = false
+        })
       }
     },
     handleReset() {
