@@ -891,6 +891,8 @@ interface DiseaseComparisonResult {
 const diseaseComparisonResult = ref<DiseaseComparisonResult | null>(null)
 const diseaseComparisonChart = ref<HTMLElement | null>(null)
 let diseaseChartInstance: echarts.ECharts | null = null
+let environmentResizeHandler: (() => void) | null = null
+let diseaseResizeHandler: (() => void) | null = null
 
 
 // 过滤掉空字符串的建议
@@ -1052,6 +1054,14 @@ onBeforeUnmount(() => {
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
     resizeHandler = null
+  }
+  if (environmentResizeHandler) {
+    window.removeEventListener('resize', environmentResizeHandler)
+    environmentResizeHandler = null
+  }
+  if (diseaseResizeHandler) {
+    window.removeEventListener('resize', diseaseResizeHandler)
+    diseaseResizeHandler = null
   }
   if (chartInstance) {
     chartInstance.dispose()
@@ -1218,11 +1228,14 @@ const renderEnvironmentComparisonChart = () => {
 
   environmentChartInstance.setOption(option)
 
-  // 响应式调整
-  const envResizeHandler = () => {
+  // 响应式调整 - 先移除旧的监听器
+  if (environmentResizeHandler) {
+    window.removeEventListener('resize', environmentResizeHandler)
+  }
+  environmentResizeHandler = () => {
     environmentChartInstance?.resize()
   }
-  window.addEventListener('resize', envResizeHandler)
+  window.addEventListener('resize', environmentResizeHandler)
 }
 
 // 疾病风险预测
@@ -1369,8 +1382,11 @@ const renderDiseaseComparisonChart = () => {
 
   diseaseChartInstance.setOption(option)
 
-  // 响应式调整
-  const diseaseResizeHandler = () => {
+  // 响应式调整 - 先移除旧的监听器
+  if (diseaseResizeHandler) {
+    window.removeEventListener('resize', diseaseResizeHandler)
+  }
+  diseaseResizeHandler = () => {
     diseaseChartInstance?.resize()
   }
   window.addEventListener('resize', diseaseResizeHandler)
