@@ -217,8 +217,8 @@ html, body, #app {
     height: calc(100vh - 60px);
   }
 
-  .main-content {
-    margin-left: 0 !important;
+  .main-content.el-main {
+    margin-left: 0;
   }
 
   .user-name {

@@ -311,7 +311,7 @@ const predictGrowth = () => {
     ElMessage.success('生长预测完成')
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : '未知错误'
-    ElMessage.error('预测失败: ' + errorMsg)
+    ElMessage.error(`预测失败: ${errorMsg}`)
   }
 }
 
@@ -322,7 +322,7 @@ const predictEnvironment = () => {
     ElMessage.success('环境评价完成')
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : '未知错误'
-    ElMessage.error('评价失败: ' + errorMsg)
+    ElMessage.error(`评价失败: ${errorMsg}`)
   }
 }
 
@@ -333,7 +333,7 @@ const predictDisease = () => {
     ElMessage.success('风险预测完成')
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : '未知错误'
-    ElMessage.error('预测失败: ' + errorMsg)
+    ElMessage.error(`预测失败: ${errorMsg}`)
   }
 }
 
