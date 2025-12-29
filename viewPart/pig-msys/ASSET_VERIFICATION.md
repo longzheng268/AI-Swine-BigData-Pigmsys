@@ -65,8 +65,8 @@ git ls-files src/assets/
 
 ### Critical Files Checklist
 Before deployment, verify these files exist:
-- [ ] `/viewPart/pig-msys/src/assets/logo.jpg`
-- [ ] `/viewPart/pig-msys/src/assets/bg.png`
+- [x] `/viewPart/pig-msys/src/assets/logo.jpg`
+- [x] `/viewPart/pig-msys/src/assets/bg.png`
 
 ### Quick Verification Command
 ```bash
@@ -76,8 +76,10 @@ ls -lh src/assets/
 ```
 
 ## Notes
-- `logo.jpg` is actually a PNG image (200x200 pixels) despite the .jpg extension
-- This doesn't affect webpack's ability to process it
+- ⚠️  `logo.jpg` is actually a PNG image (200x200 pixels) despite the .jpg extension
+  - This is a **naming inconsistency** but doesn't affect webpack's processing
+  - For better clarity, consider renaming to `logo.png` and updating all references
+  - Current status: Working correctly, renaming optional but recommended for consistency
 - Both assets are properly handled by the Vue CLI build process
 
 ## Build Test Results
