@@ -44,6 +44,11 @@ public class DataUploadController {
 
         try {
             UploadRecord record = dataUploadService.uploadEnvironmentData(file, userId, username);
+            // 检查上传记录的状态，如果失败则返回错误响应
+            if ("FAILED".equals(record.getStatus())) {
+                String errorMsg = record.getErrorMessage() != null ? record.getErrorMessage() : "数据导入失败";
+                return JSONData.buildError("上传失败：" + errorMsg);
+            }
             return JSONData.buildSuccess(record);
         } catch (Exception e) {
             e.printStackTrace();
