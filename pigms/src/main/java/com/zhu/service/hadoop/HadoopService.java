@@ -3,6 +3,7 @@ package com.zhu.service.hadoop;
 import com.zhu.config.HadoopConfig;
 import com.zhu.hadoop.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.DoubleWritable;
@@ -447,14 +448,10 @@ public class HadoopService {
     
     /**
      * 获取异常堆栈跟踪字符串
+     * 使用 Apache Commons Lang3 的 ExceptionUtils 提供更健壮的实现
      */
     private String getStackTraceString(Exception e) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(e.toString()).append("\n");
-        for (StackTraceElement element : e.getStackTrace()) {
-            sb.append("\tat ").append(element.toString()).append("\n");
-        }
-        return sb.toString();
+        return ExceptionUtils.getStackTrace(e);
     }
 }
 
