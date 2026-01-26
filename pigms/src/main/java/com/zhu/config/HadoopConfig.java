@@ -51,23 +51,39 @@ public class HadoopConfig {
         
         // 设置 HDFS 地址
         configuration.set("fs.defaultFS", nameNode);
+        log.info("配置 fs.defaultFS = {}", nameNode);
         
         // 设置 YARN ResourceManager 地址
         configuration.set("yarn.resourcemanager.address", resourceManager);
+        log.info("配置 yarn.resourcemanager.address = {}", resourceManager);
         
         // 设置 MapReduce 框架为 YARN
         configuration.set("mapreduce.framework.name", mapreduceFramework);
+        log.info("配置 mapreduce.framework.name = {}", mapreduceFramework);
+        
+        // 验证是否使用 YARN 模式
+        if (!"yarn".equalsIgnoreCase(mapreduceFramework)) {
+            log.warn("警告：MapReduce 框架未设置为 YARN，当前值为: {}，作业将在本地模式运行，不会提交到 YARN ResourceManager", mapreduceFramework);
+        }
         
         // 跨平台提交作业配置（Windows 提交到 Linux 集群）
         configuration.set("mapreduce.app-submission.cross-platform", "true");
+        log.info("配置 mapreduce.app-submission.cross-platform = true");
         
         // 设置用户身份
         System.setProperty("HADOOP_USER_NAME", hdfsUser);
+        log.info("配置 HADOOP_USER_NAME = {}", hdfsUser);
         
         // JobHistoryServer 地址（可选）
         // configuration.set("mapreduce.jobhistory.address", "localhost:10020");
         
-        log.info("Hadoop 配置初始化完成：NameNode={}, User={}", nameNode, hdfsUser);
+        log.info("========================================");
+        log.info("Hadoop 配置初始化完成");
+        log.info("NameNode: {}", nameNode);
+        log.info("ResourceManager: {}", resourceManager);
+        log.info("MapReduce Framework: {}", mapreduceFramework);
+        log.info("HDFS User: {}", hdfsUser);
+        log.info("========================================");
         
         return configuration;
     }
@@ -97,7 +113,16 @@ public class HadoopConfig {
     public Job createJob(String jobName) throws IOException {
         org.apache.hadoop.conf.Configuration configuration = hadoopConfiguration();
         Job job = Job.getInstance(configuration, jobName);
+        
+        log.info("========================================");
         log.info("创建 MapReduce Job: {}", jobName);
+        log.info("Job 配置验证:");
+        log.info("  - fs.defaultFS: {}", configuration.get("fs.defaultFS"));
+        log.info("  - yarn.resourcemanager.address: {}", configuration.get("yarn.resourcemanager.address"));
+        log.info("  - mapreduce.framework.name: {}", configuration.get("mapreduce.framework.name"));
+        log.info("  - mapreduce.app-submission.cross-platform: {}", configuration.get("mapreduce.app-submission.cross-platform"));
+        log.info("========================================");
+        
         return job;
     }
 }
