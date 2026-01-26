@@ -223,7 +223,12 @@ public class DashboardService {
             Map<String, Object> mrResult = hadoopService.runPigDataAnalysis(hdfsInputPath);
             
             if (mrResult != null && Boolean.TRUE.equals(mrResult.get("success"))) {
-                log.info("MapReduce任务执行成功");
+                log.info("========================================");
+                log.info("猪数据 MapReduce 任务执行成功");
+                log.info("  - Job ID: {}", mrResult.get("jobId"));
+                log.info("  - Tracking URL: {}", mrResult.get("trackingUrl"));
+                log.info("  - 耗时: {} ms", mrResult.get("duration"));
+                log.info("========================================");
                 
                 // 5. 解析MapReduce结果
                 Object result = mrResult.get("result");
@@ -260,7 +265,25 @@ public class DashboardService {
                 }
                 
             } else {
-                log.warn("MapReduce任务执行失败，使用本地统计");
+                log.error("========================================");
+                log.error("猪数据 MapReduce 任务执行失败");
+                if (mrResult != null) {
+                    log.error("  - 错误信息: {}", mrResult.get("error"));
+                    log.error("  - 异常类型: {}", mrResult.get("exceptionType"));
+                    if (mrResult.get("jobId") != null) {
+                        log.error("  - Job ID: {}", mrResult.get("jobId"));
+                    }
+                    if (mrResult.get("trackingUrl") != null) {
+                        log.error("  - Tracking URL: {}", mrResult.get("trackingUrl"));
+                    }
+                    if (mrResult.get("stackTrace") != null) {
+                        log.error("  - 堆栈跟踪:\n{}", mrResult.get("stackTrace"));
+                    }
+                } else {
+                    log.error("  - MapReduce 任务返回结果为 null");
+                }
+                log.error("========================================");
+                log.warn("降级使用本地数据库统计");
                 return getLocalPigTypeDistribution(allPigs, typeIdToNameMap);
             }
             
@@ -325,7 +348,12 @@ public class DashboardService {
             Map<String, Object> mrResult = hadoopService.runEnvironmentDataAnalysis(hdfsInputPath);
             
             if (mrResult != null && Boolean.TRUE.equals(mrResult.get("success"))) {
-                log.info("环境数据MapReduce任务执行成功");
+                log.info("========================================");
+                log.info("环境数据 MapReduce 任务执行成功");
+                log.info("  - Job ID: {}", mrResult.get("jobId"));
+                log.info("  - Tracking URL: {}", mrResult.get("trackingUrl"));
+                log.info("  - 耗时: {} ms", mrResult.get("duration"));
+                log.info("========================================");
                 
                 // 5. 解析MapReduce结果
                 Object result = mrResult.get("result");
@@ -364,7 +392,25 @@ public class DashboardService {
                 }
                 
             } else {
-                log.warn("环境数据MapReduce任务执行失败，使用本地统计");
+                log.error("========================================");
+                log.error("环境数据 MapReduce 任务执行失败");
+                if (mrResult != null) {
+                    log.error("  - 错误信息: {}", mrResult.get("error"));
+                    log.error("  - 异常类型: {}", mrResult.get("exceptionType"));
+                    if (mrResult.get("jobId") != null) {
+                        log.error("  - Job ID: {}", mrResult.get("jobId"));
+                    }
+                    if (mrResult.get("trackingUrl") != null) {
+                        log.error("  - Tracking URL: {}", mrResult.get("trackingUrl"));
+                    }
+                    if (mrResult.get("stackTrace") != null) {
+                        log.error("  - 堆栈跟踪:\n{}", mrResult.get("stackTrace"));
+                    }
+                } else {
+                    log.error("  - MapReduce 任务返回结果为 null");
+                }
+                log.error("========================================");
+                log.warn("降级使用本地数据库统计");
                 return getLocalEnvironmentMetrics(envDataList);
             }
             
