@@ -46,7 +46,7 @@ public class DataUploadService {
         record.setDataType("ENVIRONMENT");
         record.setUploadUserId(userId);
         record.setUploadUsername(username);
-        record.setStatus("PROCESSING");
+        record.setStatus(UploadRecord.STATUS_PROCESSING);
         record.setCreateTime(new Date());
 
         try {
@@ -90,10 +90,10 @@ public class DataUploadService {
             }
 
             // 更新状态
-            record.setStatus("SUCCESS");
+            record.setStatus(UploadRecord.STATUS_SUCCESS);
 
         } catch (Exception e) {
-            record.setStatus("FAILED");
+            record.setStatus(UploadRecord.STATUS_FAILED);
             record.setErrorMessage(e.getMessage());
         }
 

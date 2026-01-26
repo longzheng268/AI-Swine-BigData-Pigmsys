@@ -10,6 +10,11 @@ import java.util.Date;
  */
 @Data
 public class UploadRecord implements Serializable {
+    // 状态常量
+    public static final String STATUS_PROCESSING = "PROCESSING";
+    public static final String STATUS_SUCCESS = "SUCCESS";
+    public static final String STATUS_FAILED = "FAILED";
+    
     private Long id;
     private String fileName;
     private String originalName;
