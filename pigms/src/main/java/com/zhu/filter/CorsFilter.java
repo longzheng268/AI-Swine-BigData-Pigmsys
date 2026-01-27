@@ -1,3 +1,4 @@
+//过滤器(跨域资源共享)
 package com.zhu.filter;
 import org.springframework.stereotype.Component;
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhu.mapper.RoleMapper">
+    
+    <resultMap id="BaseResultMap" type="com.zhu.pojo.Role">
+        <id column="id" property="id"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_code" property="roleCode"/>
+        <result column="description" property="description"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.zhu.pojo.Role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_role (role_name, role_code, description, create_time)
+        VALUES (#{roleName}, #{roleCode}, #{description}, #{createTime})
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM tb_role WHERE id = #{id}
+    </delete>
+
+    <update id="updateByPrimaryKey" parameterType="com.zhu.pojo.Role">
+        UPDATE tb_role
+        SET role_name = #{roleName},
+            role_code = #{roleCode},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * FROM tb_role WHERE id = #{id}
+    </select>
+
+    <select id="selectByRoleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * FROM tb_role WHERE role_code = #{roleCode}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM tb_role ORDER BY id ASC
+    </select>
+
+</mapper>
+
+
+

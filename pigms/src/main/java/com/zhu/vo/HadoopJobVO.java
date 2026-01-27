@@ -1,3 +1,4 @@
+//将hadoop对象传到前端(方便展示)
 package com.zhu.vo;
 
 import lombok.AllArgsConstructor;

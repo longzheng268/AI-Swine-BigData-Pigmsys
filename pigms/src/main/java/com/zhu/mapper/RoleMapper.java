@@ -1,3 +1,4 @@
+//角色 Mapper 接口
 package com.zhu.mapper;
 
 import com.zhu.pojo.Role;
@@ -6,9 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * 角色 Mapper 接口
- */
+
 @Mapper
 public interface RoleMapper {
     

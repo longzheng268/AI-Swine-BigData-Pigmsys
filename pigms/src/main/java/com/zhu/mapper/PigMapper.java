@@ -1,3 +1,4 @@
+//pig表的数据访问(Dao层)
 package com.zhu.mapper;
 
 import com.zhu.pojo.Pig;

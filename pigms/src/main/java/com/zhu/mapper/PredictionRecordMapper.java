@@ -1,3 +1,4 @@
+//预测记录接口
 package com.zhu.mapper;
 
 import com.zhu.pojo.PredictionRecord;
@@ -6,9 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * 预测记录 Mapper 接口
- */
+
 @Mapper
 public interface PredictionRecordMapper {
     

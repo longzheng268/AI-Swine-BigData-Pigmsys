@@ -1,3 +1,4 @@
+//用户的登录信息
 package com.zhu.pojo;
 
 import lombok.AllArgsConstructor;

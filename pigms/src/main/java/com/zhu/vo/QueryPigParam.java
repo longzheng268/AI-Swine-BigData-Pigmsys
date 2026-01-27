@@ -1,3 +1,4 @@
+//定义生猪信息参数
 package com.zhu.vo;
 
 import lombok.AllArgsConstructor;

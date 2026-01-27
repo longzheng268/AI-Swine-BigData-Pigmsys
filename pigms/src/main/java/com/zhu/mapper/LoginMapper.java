@@ -1,3 +1,4 @@
+//对login表的接口
 package com.zhu.mapper;
 
 import com.zhu.pojo.Login;

@@ -1,3 +1,4 @@
+//操作日志接口
 package com.zhu.mapper;
 
 import com.zhu.pojo.OperationLog;
@@ -7,9 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 操作日志 Mapper 接口
- */
+
 @Mapper
 public interface OperationLogMapper {
     

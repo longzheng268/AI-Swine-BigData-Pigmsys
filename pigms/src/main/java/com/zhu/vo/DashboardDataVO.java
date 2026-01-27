@@ -1,3 +1,4 @@
+//大屏数据视图对象
 package com.zhu.vo;
 
 import lombok.Data;

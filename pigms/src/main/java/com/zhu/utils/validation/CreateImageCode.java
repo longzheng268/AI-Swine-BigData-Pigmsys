@@ -1,3 +1,4 @@
+//生成验证码
 package com.zhu.utils.validation;
 
 import org.slf4j.Logger;

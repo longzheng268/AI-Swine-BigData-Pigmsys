@@ -1,3 +1,4 @@
+//预测模型实体类
 package com.zhu.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -6,9 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * 预测模型实体类
- */
+
 @Data
 public class Model implements Serializable {
     private Integer id;

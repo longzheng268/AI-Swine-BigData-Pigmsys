@@ -1,3 +1,4 @@
+//数据上传记录接口
 package com.zhu.mapper;
 
 import com.zhu.pojo.UploadRecord;
@@ -6,9 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * 数据上传记录 Mapper 接口
- */
+
 @Mapper
 public interface UploadRecordMapper {
     

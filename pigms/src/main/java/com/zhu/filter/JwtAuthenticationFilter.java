@@ -1,3 +1,4 @@
+//JWT认证过滤器
 package com.zhu.filter;
 
 import com.zhu.utils.jwt.JwtUtils;
@@ -17,9 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * JWT 认证过滤器
- */
+
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

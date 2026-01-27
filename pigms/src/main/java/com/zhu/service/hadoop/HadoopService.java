@@ -1,9 +1,9 @@
+//HDFS文件操作 MapReduce任务管理
 package com.zhu.service.hadoop;
 
 import com.zhu.config.HadoopConfig;
 import com.zhu.hadoop.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.DoubleWritable;
@@ -173,10 +173,6 @@ public class HadoopService {
         
         try {
             String jobName = "PigDataAnalysis_" + System.currentTimeMillis();
-            log.info("========================================");
-            log.info("开始提交 MapReduce 任务: {}", jobName);
-            log.info("输入文件: {}", inputFile);
-            
             Job job = hadoopConfig.createJob(jobName);
             
             // 设置 Jar 类
@@ -191,23 +187,8 @@ public class HadoopService {
             job.setOutputValueClass(IntWritable.class);
             
             // 设置输入输出路径
-            // 注意：inputFile 已经是完整的 HDFS 路径
-            String input = inputFile;
+            String input = inputPath + "/" + inputFile;
             String output = outputPath + "/" + jobName;
-            
-            log.info("MapReduce 输入路径: {}", input);
-            log.info("MapReduce 输出路径: {}", output);
-            
-            // 验证输入文件是否存在
-            Path inputPath = new Path(input);
-            if (!fileSystem.exists(inputPath)) {
-                String errorMsg = "输入文件不存在: " + input;
-                log.error(errorMsg);
-                result.put("success", false);
-                result.put("error", errorMsg);
-                return result;
-            }
-            log.info("输入文件验证成功，文件存在: {}", input);
             
             FileInputFormat.addInputPath(job, new Path(input));
             FileOutputFormat.setOutputPath(job, new Path(output));
@@ -215,63 +196,27 @@ public class HadoopService {
             // 删除已存在的输出目录
             Path outputPath = new Path(output);
             if (fileSystem.exists(outputPath)) {
-                log.info("删除已存在的输出目录: {}", output);
                 fileSystem.delete(outputPath, true);
             }
             
             // 提交任务并等待完成
-            log.info("提交 MapReduce 任务到 YARN 集群...");
-            long startTime = System.currentTimeMillis();
-            
             boolean success = job.waitForCompletion(true);
-            
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("MapReduce 任务执行完成，耗时: {} ms", duration);
-            
-            // 获取 Job ID（YARN Application ID）
-            String jobId = job.getJobID() != null ? job.getJobID().toString() : "未知";
-            String trackingUrl = job.getTrackingURL();
-            
-            log.info("========================================");
-            log.info("MapReduce 任务详情:");
-            log.info("  - Job Name: {}", jobName);
-            log.info("  - Job ID: {}", jobId);
-            log.info("  - Tracking URL: {}", trackingUrl);
-            log.info("  - 执行状态: {}", success ? "成功" : "失败");
-            log.info("  - 耗时: {} ms", duration);
-            log.info("========================================");
             
             result.put("success", success);
             result.put("jobName", jobName);
-            result.put("jobId", jobId);
-            result.put("trackingUrl", trackingUrl);
             result.put("outputPath", output);
-            result.put("duration", duration);
             
             if (success) {
                 // 读取结果
-                String resultPath = output + "/part-r-00000";
-                log.info("读取 MapReduce 结果: {}", resultPath);
-                String resultContent = readFileContent(resultPath);
+                String resultContent = readFileContent(output + "/part-r-00000");
                 result.put("result", parseAnalysisResult(resultContent));
                 log.info("猪数据分析任务完成：{}", jobName);
-            } else {
-                String errorMsg = "MapReduce 任务执行失败，请检查 YARN ResourceManager 日志";
-                log.error(errorMsg);
-                result.put("error", errorMsg);
             }
             
         } catch (Exception e) {
-            log.error("========================================");
-            log.error("执行 MapReduce 任务异常");
-            log.error("异常类型: {}", e.getClass().getName());
-            log.error("异常消息: {}", e.getMessage());
-            log.error("========================================", e);
-            
+            log.error("执行 MapReduce 任务失败", e);
             result.put("success", false);
             result.put("error", e.getMessage());
-            result.put("exceptionType", e.getClass().getName());
-            result.put("stackTrace", getStackTraceString(e));
         }
         
         return result;
@@ -285,10 +230,6 @@ public class HadoopService {
         
         try {
             String jobName = "EnvironmentDataAnalysis_" + System.currentTimeMillis();
-            log.info("========================================");
-            log.info("开始提交环境数据分析 MapReduce 任务: {}", jobName);
-            log.info("输入文件: {}", inputFile);
-            
             Job job = hadoopConfig.createJob(jobName);
             
             // 设置 Jar 类
@@ -307,23 +248,8 @@ public class HadoopService {
             job.setOutputValueClass(Text.class);
             
             // 设置输入输出路径
-            // 注意：inputFile 已经是完整的 HDFS 路径
-            String input = inputFile;
+            String input = inputPath + "/" + inputFile;
             String output = outputPath + "/" + jobName;
-            
-            log.info("MapReduce 输入路径: {}", input);
-            log.info("MapReduce 输出路径: {}", output);
-            
-            // 验证输入文件是否存在
-            Path inputPath = new Path(input);
-            if (!fileSystem.exists(inputPath)) {
-                String errorMsg = "输入文件不存在: " + input;
-                log.error(errorMsg);
-                result.put("success", false);
-                result.put("error", errorMsg);
-                return result;
-            }
-            log.info("输入文件验证成功，文件存在: {}", input);
             
             FileInputFormat.addInputPath(job, new Path(input));
             FileOutputFormat.setOutputPath(job, new Path(output));
@@ -331,63 +257,27 @@ public class HadoopService {
             // 删除已存在的输出目录
             Path outputPath = new Path(output);
             if (fileSystem.exists(outputPath)) {
-                log.info("删除已存在的输出目录: {}", output);
                 fileSystem.delete(outputPath, true);
             }
             
             // 提交任务并等待完成
-            log.info("提交环境数据分析 MapReduce 任务到 YARN 集群...");
-            long startTime = System.currentTimeMillis();
-            
             boolean success = job.waitForCompletion(true);
-            
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("环境数据分析 MapReduce 任务执行完成，耗时: {} ms", duration);
-            
-            // 获取 Job ID（YARN Application ID）
-            String jobId = job.getJobID() != null ? job.getJobID().toString() : "未知";
-            String trackingUrl = job.getTrackingURL();
-            
-            log.info("========================================");
-            log.info("MapReduce 任务详情:");
-            log.info("  - Job Name: {}", jobName);
-            log.info("  - Job ID: {}", jobId);
-            log.info("  - Tracking URL: {}", trackingUrl);
-            log.info("  - 执行状态: {}", success ? "成功" : "失败");
-            log.info("  - 耗时: {} ms", duration);
-            log.info("========================================");
             
             result.put("success", success);
             result.put("jobName", jobName);
-            result.put("jobId", jobId);
-            result.put("trackingUrl", trackingUrl);
             result.put("outputPath", output);
-            result.put("duration", duration);
             
             if (success) {
                 // 读取结果
-                String resultPath = output + "/part-r-00000";
-                log.info("读取环境数据分析 MapReduce 结果: {}", resultPath);
-                String resultContent = readFileContent(resultPath);
+                String resultContent = readFileContent(output + "/part-r-00000");
                 result.put("result", parseEnvironmentAnalysisResult(resultContent));
                 log.info("环境数据分析任务完成：{}", jobName);
-            } else {
-                String errorMsg = "环境数据分析 MapReduce 任务执行失败，请检查 YARN ResourceManager 日志";
-                log.error(errorMsg);
-                result.put("error", errorMsg);
             }
             
         } catch (Exception e) {
-            log.error("========================================");
-            log.error("执行环境数据分析 MapReduce 任务异常");
-            log.error("异常类型: {}", e.getClass().getName());
-            log.error("异常消息: {}", e.getMessage());
-            log.error("========================================", e);
-            
+            log.error("执行 MapReduce 任务失败", e);
             result.put("success", false);
             result.put("error", e.getMessage());
-            result.put("exceptionType", e.getClass().getName());
-            result.put("stackTrace", getStackTraceString(e));
         }
         
         return result;
@@ -444,14 +334,6 @@ public class HadoopService {
             log.error("HDFS 连接检查失败", e);
             return false;
         }
-    }
-    
-    /**
-     * 获取异常堆栈跟踪字符串
-     * 使用 Apache Commons Lang3 的 ExceptionUtils 提供更健壮的实现
-     */
-    private String getStackTraceString(Exception e) {
-        return ExceptionUtils.getStackTrace(e);
     }
 }
 

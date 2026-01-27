@@ -1,3 +1,4 @@
+//猪的信息
 package com.zhu.pojo;
 
 import java.util.Date;

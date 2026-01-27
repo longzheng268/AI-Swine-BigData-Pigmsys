@@ -1,3 +1,4 @@
+//环境监测数据实体类
 package com.zhu.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -6,9 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * 环境监测数据实体类
- */
+
 @Data
 public class EnvironmentData implements Serializable {
     private Long id;

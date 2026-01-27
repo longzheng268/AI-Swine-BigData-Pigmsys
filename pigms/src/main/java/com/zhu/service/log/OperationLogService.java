@@ -1,3 +1,4 @@
+//对操作日志的增删改查
 package com.zhu.service.log;
 
 import com.github.pagehelper.PageHelper;

@@ -8,7 +8,7 @@ pip install flask numpy scikit-learn joblib
 运行方式:
 python app.py
 
-服务将运行在 http://localhost:5000
+服务将运行在 http://localhost:5001
 """
 
 from flask import Flask, request, jsonify
@@ -224,11 +224,8 @@ def health():
 if __name__ == '__main__':
     print('=' * 60)
     print('Python 预测服务启动中...')
-    print('服务地址: http://localhost:5000')
-    print('健康检查: http://localhost:5000/health')
-    print('预测接口: http://localhost:5000/predict')
+    print('服务地址: http://localhost:5001')
+    print('健康检查: http://localhost:5001/health')
+    print('预测接口: http://localhost:5001/predict')
     print('=' * 60)
-    app.run(host='0.0.0.0', port=500, debug=True)
-
-
-
+    app.run(host='0.0.0.0', port=5001, debug=True)

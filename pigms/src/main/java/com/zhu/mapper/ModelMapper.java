@@ -1,3 +1,4 @@
+//预测模型接口
 package com.zhu.mapper;
 
 import com.zhu.pojo.Model;
@@ -6,9 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * 预测模型 Mapper 接口
- */
+
 @Mapper
 public interface ModelMapper {
     

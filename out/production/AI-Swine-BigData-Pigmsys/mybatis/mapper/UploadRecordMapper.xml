@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhu.mapper.UploadRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.zhu.pojo.UploadRecord">
+        <id column="id" property="id"/>
+        <result column="file_name" property="fileName"/>
+        <result column="original_name" property="originalName"/>
+        <result column="file_path" property="filePath"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="file_type" property="fileType"/>
+        <result column="data_type" property="dataType"/>
+        <result column="upload_user_id" property="uploadUserId"/>
+        <result column="upload_username" property="uploadUsername"/>
+        <result column="status" property="status"/>
+        <result column="success_count" property="successCount"/>
+        <result column="failed_count" property="failedCount"/>
+        <result column="error_message" property="errorMessage"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.zhu.pojo.UploadRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_upload_record 
+        (file_name, original_name, file_path, file_size, file_type, data_type, 
+         upload_user_id, upload_username, status, success_count, failed_count, error_message, create_time)
+        VALUES 
+        (#{fileName}, #{originalName}, #{filePath}, #{fileSize}, #{fileType}, #{dataType},
+         #{uploadUserId}, #{uploadUsername}, #{status}, #{successCount}, #{failedCount}, #{errorMessage}, #{createTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.zhu.pojo.UploadRecord">
+        UPDATE tb_upload_record
+        SET status = #{status},
+            success_count = #{successCount},
+            failed_count = #{failedCount},
+            error_message = #{errorMessage}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM tb_upload_record WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM tb_upload_record ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * FROM tb_upload_record WHERE upload_user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+</mapper>
+
+
+

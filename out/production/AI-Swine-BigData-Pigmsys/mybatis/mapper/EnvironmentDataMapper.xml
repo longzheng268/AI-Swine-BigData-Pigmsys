@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhu.mapper.EnvironmentDataMapper">
+    
+    <resultMap id="BaseResultMap" type="com.zhu.pojo.EnvironmentData">
+        <id column="id" property="id"/>
+        <result column="monitor_point" property="monitorPoint"/>
+        <result column="monitor_location" property="monitorLocation"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+        <result column="temperature" property="temperature"/>
+        <result column="humidity" property="humidity"/>
+        <result column="co2_concentration" property="co2Concentration"/>
+        <result column="nh3_concentration" property="nh3Concentration"/>
+        <result column="light_intensity" property="lightIntensity"/>
+        <result column="collect_time" property="collectTime"/>
+        <result column="is_abnormal" property="isAbnormal"/>
+        <result column="abnormal_reason" property="abnormalReason"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.zhu.pojo.EnvironmentData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_environment_data 
+        (monitor_point, monitor_location, latitude, longitude, temperature, humidity, 
+         co2_concentration, nh3_concentration, light_intensity, collect_time, 
+         is_abnormal, abnormal_reason, create_time)
+        VALUES 
+        (#{monitorPoint}, #{monitorLocation}, #{latitude}, #{longitude}, #{temperature}, #{humidity},
+         #{co2Concentration}, #{nh3Concentration}, #{lightIntensity}, #{collectTime},
+         #{isAbnormal}, #{abnormalReason}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO tb_environment_data 
+        (monitor_point, monitor_location, latitude, longitude, temperature, humidity, 
+         co2_concentration, nh3_concentration, light_intensity, collect_time, 
+         is_abnormal, abnormal_reason, create_time)
+        VALUES 
+        <foreach collection="list" item="item" separator=",">
+            (#{item.monitorPoint}, #{item.monitorLocation}, #{item.latitude}, #{item.longitude}, 
+             #{item.temperature}, #{item.humidity}, #{item.co2Concentration}, #{item.nh3Concentration}, 
+             #{item.lightIntensity}, #{item.collectTime}, #{item.isAbnormal}, #{item.abnormalReason}, 
+             #{item.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM tb_environment_data WHERE id = #{id}
+    </delete>
+
+    <update id="updateByPrimaryKey" parameterType="com.zhu.pojo.EnvironmentData">
+        UPDATE tb_environment_data
+        SET monitor_point = #{monitorPoint},
+            monitor_location = #{monitorLocation},
+            latitude = #{latitude},
+            longitude = #{longitude},
+            temperature = #{temperature},
+            humidity = #{humidity},
+            co2_concentration = #{co2Concentration},
+            nh3_concentration = #{nh3Concentration},
+            light_intensity = #{lightIntensity},
+            collect_time = #{collectTime},
+            is_abnormal = #{isAbnormal},
+            abnormal_reason = #{abnormalReason}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM tb_environment_data WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM tb_environment_data ORDER BY collect_time DESC
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT * FROM tb_environment_data
+        <where>
+            <if test="monitorPoint != null and monitorPoint != ''">
+                AND monitor_point = #{monitorPoint}
+            </if>
+            <if test="startTime != null">
+                AND collect_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND collect_time &lt;= #{endTime}
+            </if>
+            <if test="isAbnormal != null">
+                AND is_abnormal = #{isAbnormal}
+            </if>
+        </where>
+        ORDER BY collect_time DESC
+    </select>
+
+    <select id="selectLatestByMonitorPoint" resultMap="BaseResultMap">
+        SELECT * FROM (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY monitor_point ORDER BY collect_time DESC) as rn
+            FROM tb_environment_data
+        ) t
+        WHERE t.rn = 1
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="countAbnormal" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tb_environment_data
+        WHERE is_abnormal = 1
+        <if test="startTime != null">
+            AND collect_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND collect_time &lt;= #{endTime}
+        </if>
+    </select>
+
+</mapper>
+
+
+

@@ -1,3 +1,4 @@
+//对猪的类型的数据表的操作
 package com.zhu.mapper;
 
 import com.zhu.pojo.PigType;

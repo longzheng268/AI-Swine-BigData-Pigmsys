@@ -1,3 +1,4 @@
+//表示用户对象
 package com.zhu.pojo;
 
 import java.util.Date;

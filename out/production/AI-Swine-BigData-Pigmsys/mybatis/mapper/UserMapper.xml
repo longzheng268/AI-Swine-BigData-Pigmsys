@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhu.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.zhu.pojo.User">
+    <!--@mbg.generated-->
+    <!--@Table tb_user-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userISBN" jdbcType="VARCHAR" property="userisbn" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="birthday" jdbcType="TIMESTAMP" property="birthday" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="userRole" jdbcType="INTEGER" property="userrole" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, userISBN, `name`, age, sex, birthday, address, phone, userRole
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from tb_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from tb_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zhu.pojo.User" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_user (userISBN, `name`, age, 
+      sex, birthday, address, 
+      phone, userRole)
+    values (#{userisbn,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+      #{sex,jdbcType=VARCHAR}, #{birthday,jdbcType=TIMESTAMP}, #{address,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{userrole,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zhu.pojo.User" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userisbn != null">
+        userISBN,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="userrole != null">
+        userRole,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userisbn != null">
+        #{userisbn,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="userrole != null">
+        #{userrole,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhu.pojo.User">
+    <!--@mbg.generated-->
+    update tb_user
+    <set>
+      <if test="userisbn != null">
+        userISBN = #{userisbn,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="userrole != null">
+        userRole = #{userrole,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhu.pojo.User">
+    <!--@mbg.generated-->
+    update pigms.tb_user
+    set userISBN = #{userisbn,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      sex = #{sex,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=TIMESTAMP},
+      address = #{address,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      userRole = #{userrole,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="queryAllUser" resultType="user">
+        select * from `tb_user`;
+    </select>
+
+
+  <select id="selectAllUserBCondition" resultType="user" parameterType="com.zhu.vo.QueryUserParam">
+
+    select * from `tb_user`
+    <where>
+      <if test="_parameter !=null and _parameter != ''">
+        <if test="name != null and name != ''">
+          and name like concat ('%',#{_parameter.name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="_parameter.address != null and _parameter.address != ''">
+          and address like concat ('%',#{_parameter.address,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="_parameter.userRole !=null and _parameter.userRole!=''">
+          and userRole = #{userRole,jdbcType=INTEGER}
+        </if>
+        <if test="_parameter.sex !=null and _parameter.sex!=''">
+          and sex=#{sex,jdbcType=VARCHAR}
+        </if>
+
+      </if>
+    </where>
+
+  </select>
+
+</mapper>
