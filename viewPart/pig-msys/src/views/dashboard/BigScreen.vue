@@ -281,7 +281,7 @@
 
 <script>
 import * as echarts from "echarts";
-import { getDashboardData } from "@/api/dashboard";
+import { getDashboardData, submitHadoopJob } from "@/api/dashboard";
 import logoImage from "@/assets/logo.jpg";
 
 export default {
@@ -374,6 +374,8 @@ export default {
     // 等待DOM完全渲染后再初始化图表
     this.$nextTick(() => {
       this.initCharts();
+      // 打开大屏时提交 Hadoop 任务（fire-and-forget）
+      this.submitHadoopJobFire();
       this.loadData();
       this.updateTime();
       // 已禁用自动刷新功能
@@ -571,6 +573,11 @@ export default {
         return;
       }
 
+      // 如果是手动刷新，先提交 Hadoop 任务（fire-and-forget）
+      if (showMessage) {
+        this.submitHadoopJobFire();
+      }
+
       // 显示加载提示（仅在手动刷新时）
       const loadingMsg = showMessage
         ? this.$message({
@@ -582,7 +589,13 @@ export default {
         : null;
 
       try {
-        const response = await getDashboardData();
+        // 添加 10 秒超时保护
+        const response = await Promise.race([
+          getDashboardData(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('请求超时')), 10000)
+          )
+        ]);
 
         // 再次检查组件是否已销毁（异步操作完成时）
         if (this.isDestroyed) {
@@ -725,13 +738,14 @@ export default {
         });
 
         // 处理超时错误
-        if (error.message && error.message.includes("timeout")) {
-          this.$message.warning({
-            message:
-              "数据加载超时，大屏聚合多个数据源需要时间。正在使用默认数据，请稍后手动刷新。",
-            duration: 5000,
-            showClose: true,
-          });
+        if (error.message && (error.message.includes("timeout") || error.message.includes("超时"))) {
+          console.warn("⚠️  数据加载超时，使用默认数据");
+          if (showMessage) {
+            this.$message.warning({
+              message: "数据加载超时，使用默认数据展示",
+              duration: 3000,
+            });
+          }
           // 使用默认数据继续显示，而不是完全失败
           this.loadDefaultData();
           return;
@@ -1345,6 +1359,27 @@ export default {
         animationDuration: `${duration}s`,
         animationDelay: `${delay}s`,
       };
+    },
+
+    /**
+     * 提交 Hadoop 任务（fire-and-forget，不阻塞界面）
+     */
+    submitHadoopJobFire() {
+      try {
+        // 不 await，fire-and-forget 模式
+        submitHadoopJob()
+          .then((res) => {
+            if (process.env.NODE_ENV === "development") {
+              console.log("✅ Hadoop 任务已提交:", res.data);
+            }
+          })
+          .catch((err) => {
+            // 忽略错误，但在控制台记录以便排查
+            console.warn("⚠️  Hadoop 任务提交失败（已忽略）:", err.message || err);
+          });
+      } catch (err) {
+        console.warn("⚠️  Hadoop 任务提交异常（已忽略）:", err);
+      }
     },
   },
 };

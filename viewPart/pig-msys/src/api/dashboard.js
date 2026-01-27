@@ -8,9 +8,9 @@ import myaxios from "@/utils/myaxios";
  * 注意：此接口需要聚合Hadoop、Python等多个数据源，可能需要较长时间
  */
 export function getDashboardData() {
-  // 创建临时axios实例，设置更长的超时时间
+  // 设置 10 秒超时，避免大屏卡住
   return myaxios.get("/api/dashboard/data", {
-    timeout: 60000, // 增加到60秒，因为需要聚合多个数据源
+    timeout: 10000, // 10 秒超时
   });
 }
 
@@ -44,4 +44,27 @@ export function getPrediction() {
  */
 export function healthCheck() {
   return myaxios.get("/api/dashboard/health");
+}
+
+/**
+ * 提交 Hadoop MapReduce 任务（fire-and-forget）
+ * 调用内置的 Node.js 后端服务
+ */
+export function submitHadoopJob() {
+  // 使用原生 fetch 避免 myaxios 的 baseURL 干扰
+  const hostname = window.location.hostname;
+  const url = `http://${hostname}:3100/api/hadoop/submit-environment-analysis`;
+  
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({})
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  });
 }
